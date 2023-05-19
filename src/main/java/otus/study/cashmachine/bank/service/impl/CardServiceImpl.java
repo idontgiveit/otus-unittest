@@ -1,5 +1,6 @@
 package otus.study.cashmachine.bank.service.impl;
 
+import java.util.TreeSet;
 import otus.study.cashmachine.bank.dao.CardsDao;
 import otus.study.cashmachine.bank.data.Card;
 import otus.study.cashmachine.bank.service.AccountService;
@@ -27,7 +28,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean cnangePin(String number, String oldPin, String newPin) {
+    public boolean changePin(String number, String oldPin, String newPin) {
         Card card = cardsDao.getCardByNumber(number);
 
         if (card == null) {

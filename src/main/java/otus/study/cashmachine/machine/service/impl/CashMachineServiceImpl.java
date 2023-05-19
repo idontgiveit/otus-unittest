@@ -61,6 +61,6 @@ public class CashMachineServiceImpl implements CashMachineService {
 
     @Override
     public boolean changePin(String cardNum, String oldPin, String newPin) {
-        return cardService.cnangePin(cardNum, oldPin, newPin);
+        return cardService.changePin(cardNum, oldPin, newPin);
     }
 }
