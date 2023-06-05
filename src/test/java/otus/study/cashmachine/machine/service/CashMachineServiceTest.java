@@ -61,18 +61,28 @@ class CashMachineServiceTest {
     @Test
     void changePin() {
 // @TODO create change pin test using spy as implementation and ArgumentCaptor and thenReturn
-        String oldPin = "1234";
-        String cardNum = "88002323";
-        Card testedCard = new Card(1L, cardNum, 10L, oldPin);
 
-        when(cardsDao.getCardByNumber(cardNum)).thenReturn(testedCard);
+        when(cardsDao.getCardByNumber("1111"))
+                .thenReturn(new Card(1, "1111", 1L, "0000"));
 
         ArgumentCaptor<Card> captor = ArgumentCaptor.forClass(Card.class);
-        when(cardsDao.saveCard(captor.capture())).thenReturn(null);
+        when(cardsDao.saveCard(captor.capture())).thenReturn(new Card(1, "1", 1L, "1"));
 
-        String newPin = "9999";
-        cashMachineService.changePin(cardNum, oldPin, newPin);
-        Assertions.assertEquals(captor.getValue().getPinCode(), newPin);
+        cashMachineService.changePin("1111", "0000", "0001");
+        Assertions.assertEquals(TestUtil.getHash("0001"), captor.getValue().getPinCode());
+
+//        String oldPin = "1234";
+//        String cardNum = "88002323";
+//        Card testedCard = new Card(1L, cardNum, 10L, TestUtil.getHash(oldPin));
+//
+//        when(cardsDao.getCardByNumber(cardNum)).thenReturn(testedCard);
+//
+//        ArgumentCaptor<Card> captor = ArgumentCaptor.forClass(Card.class);
+//        when(cardsDao.saveCard(captor.capture())).thenReturn(null);
+//
+//        String newPin = "9999";
+//        cashMachineService.changePin(cardNum, oldPin, newPin);
+//        Assertions.assertEquals(captor.getValue().getPinCode(), TestUtil.getHash(newPin));
     }
 
     @Test
