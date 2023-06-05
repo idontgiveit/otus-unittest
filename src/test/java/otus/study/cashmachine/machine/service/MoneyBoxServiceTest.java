@@ -4,10 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.*;
 import otus.study.cashmachine.machine.data.MoneyBox;
 import otus.study.cashmachine.machine.service.impl.MoneyBoxServiceImpl;
 
@@ -59,5 +56,21 @@ public class MoneyBoxServiceTest {
         int initialSum = moneyBoxService.checkSum(moneyBox);
         moneyBoxService.putMoney(moneyBox, 1, 1, 1, 1);
         assertEquals(initialSum + 5000 + 1000 + 500 + 100, moneyBoxService.checkSum(moneyBox));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 1, 2, 3, 4, 5 })
+    void addNotes100(int note100) {
+        int initialSum = moneyBoxService.checkSum(moneyBox);
+        moneyBoxService.putMoney(moneyBox, note100, 0, 0, 0);
+        assertEquals(initialSum + 100 * note100, moneyBoxService.checkSum(moneyBox));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "1, 3, 3, 2, 14600", "1, 1, 1, 1, 6600" })
+    void addNotes(int note100, int note500, int note1000, int note5000, int result) {
+        int initialSum = moneyBoxService.checkSum(moneyBox);
+        moneyBoxService.putMoney(moneyBox, note100, note500, note1000, note5000);
+        assertEquals(initialSum + result, moneyBoxService.checkSum(moneyBox));
     }
 }
