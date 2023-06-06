@@ -16,8 +16,7 @@ import otus.study.cashmachine.bank.service.impl.AccountServiceImpl;
 
 import java.math.BigDecimal;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,17 +77,52 @@ public class AccountServiceTest {
 
     @Test
     void addSum() {
+        when(accountDao.getAccount(any())).thenReturn(unexpectedAccount);
+        when(accountDao.getAccount(argThat(arg -> arg == expectedAccount.getId()))).thenReturn(expectedAccount);
+
+        BigDecimal addedAmount1 = new BigDecimal(5000);
+        BigDecimal resAmount1 = expectedAccount.getAmount().add(addedAmount1);
+        Assertions.assertEquals(accountServiceImpl.putMoney(10L, addedAmount1), resAmount1);
+
+        BigDecimal addedAmount2 = new BigDecimal(5000);
+        BigDecimal resAmount2 = expectedAccount.getAmount().add(addedAmount2).add(new BigDecimal(1000));
+        Assertions.assertNotEquals(accountServiceImpl.putMoney(10L, addedAmount2), resAmount2);
     }
 
     @Test
     void getSum() {
+        when(accountDao.getAccount(any())).thenReturn(unexpectedAccount);
+        when(accountDao.getAccount(argThat(arg -> arg == expectedAccount.getId()))).thenReturn(expectedAccount);
+
+        Assertions.assertEquals(accountServiceImpl.checkBalance(10L), expectedAmount);
+        Assertions.assertNotEquals(accountServiceImpl.checkBalance(11L), expectedAmount);
     }
 
     @Test
     void getAccount() {
+        when(accountDao.getAccount(any())).thenReturn(unexpectedAccount);
+        when(accountDao.getAccount(argThat(arg -> arg == expectedAccount.getId()))).thenReturn(expectedAccount);
+
+        Assertions.assertEquals(accountServiceImpl.getAccount(10L).getId(), expectedAccount.getId());
+        Assertions.assertNotEquals(accountServiceImpl.getAccount(11L).getId(), expectedAccount.getId());
     }
 
     @Test
     void checkBalance() {
+        when(accountDao.getAccount(any())).thenReturn(unexpectedAccount);
+        when(accountDao.getAccount(argThat(arg -> arg == expectedAccount.getId()))).thenReturn(expectedAccount);
+
+        Assertions.assertEquals(accountServiceImpl.checkBalance(10L), expectedAccount.getAmount());
+        Assertions.assertNotEquals(accountServiceImpl.checkBalance(11L), expectedAccount.getAmount());
+    }
+
+    @Test
+    void getMoney() {
+        when(accountDao.getAccount(any())).thenReturn(unexpectedAccount);
+        when(accountDao.getAccount(argThat(arg -> arg == expectedAccount.getId()))).thenReturn(expectedAccount);
+
+        Assertions.assertEquals(accountServiceImpl.getMoney(10L, BigDecimal.TEN), expectedAmount.subtract(BigDecimal.TEN));
+        Assertions.assertNotEquals(accountServiceImpl.getMoney(10L, BigDecimal.TEN), expectedAmount);
+
     }
 }

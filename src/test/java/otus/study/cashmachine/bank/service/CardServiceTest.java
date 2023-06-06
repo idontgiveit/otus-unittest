@@ -1,5 +1,6 @@
 package otus.study.cashmachine.bank.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -69,6 +70,12 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        BigDecimal expectedAmount = new BigDecimal(10000);
+        when(cardsDao.getCardByNumber("1234"))
+                .thenReturn(new Card(1, "1234", 10L, TestUtil.getHash("1111")));
+        when(accountService.putMoney(anyLong(), eq(expectedAmount))).thenReturn(expectedAmount);
+        BigDecimal resultAmount = cardService.putMoney("1234", "1111", expectedAmount);
+        Assertions.assertEquals(resultAmount, expectedAmount);
     }
 
     @Test
@@ -80,5 +87,16 @@ public class CardServiceTest {
             cardService.getBalance("1234", "0012");
         });
         assertEquals(thrown.getMessage(), "Pincode is incorrect");
+    }
+
+    @Test
+    void changePin() {
+        Card card = new Card(1L, "1234", 1L, TestUtil.getHash("1111"));
+        when(cardsDao.getCardByNumber(eq("1234"))).thenReturn(card);
+
+        when(cardsDao.saveCard(any())).thenReturn(null);
+
+        Assertions.assertTrue(cardService.cnangePin("1234", "1111", "0001"));
+        Assertions.assertFalse(cardService.cnangePin("1234", "0000", "0001"));
     }
 }
