@@ -1,8 +1,10 @@
 package otus.study.cashmachine.bank.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import otus.study.cashmachine.TestUtil;
 import otus.study.cashmachine.bank.dao.CardsDao;
 import otus.study.cashmachine.bank.data.Card;
 import otus.study.cashmachine.bank.service.impl.CardServiceImpl;
@@ -40,7 +42,7 @@ public class CardServiceTest {
 
     @Test
     void checkBalance() {
-        Card card = new Card(1L, "1234", 1L, "0000");
+        Card card = new Card(1L, "1234", 1L, TestUtil.getHash("0000"));
         when(cardsDao.getCardByNumber(anyString())).thenReturn(card);
         when(accountService.checkBalance(1L)).thenReturn(new BigDecimal(1000));
 
@@ -54,7 +56,7 @@ public class CardServiceTest {
         ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
 
         when(cardsDao.getCardByNumber("1111"))
-                .thenReturn(new Card(1L, "1111", 100L, "0000"));
+                .thenReturn(new Card(1L, "1111", 100L, TestUtil.getHash("0000")));
 
         when(accountService.getMoney(idCaptor.capture(), amountCaptor.capture()))
                 .thenReturn(BigDecimal.TEN);
@@ -68,6 +70,12 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        BigDecimal expectedAmount = new BigDecimal(10000);
+        when(cardsDao.getCardByNumber("1234"))
+                .thenReturn(new Card(1, "1234", 10L, TestUtil.getHash("1111")));
+        when(accountService.putMoney(anyLong(), eq(expectedAmount))).thenReturn(expectedAmount);
+        BigDecimal resultAmount = cardService.putMoney("1234", "1111", expectedAmount);
+        Assertions.assertEquals(resultAmount, expectedAmount);
     }
 
     @Test
@@ -79,5 +87,16 @@ public class CardServiceTest {
             cardService.getBalance("1234", "0012");
         });
         assertEquals(thrown.getMessage(), "Pincode is incorrect");
+    }
+
+    @Test
+    void changePin() {
+        Card card = new Card(1L, "1234", 1L, TestUtil.getHash("1111"));
+        when(cardsDao.getCardByNumber(eq("1234"))).thenReturn(card);
+
+        when(cardsDao.saveCard(any())).thenReturn(null);
+
+        Assertions.assertTrue(cardService.cnangePin("1234", "1111", "0001"));
+        Assertions.assertFalse(cardService.cnangePin("1234", "0000", "0001"));
     }
 }
