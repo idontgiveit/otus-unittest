@@ -34,7 +34,7 @@ public class AccountServiceTest {
 
         assertEquals(expectedAccount, testAccount);
 
-        ArgumentMatcher<Account> matcher = account -> account.getId() == account.getId() && account != null;
+        ArgumentMatcher<Account> matcher = account -> account != null && account.getId() == account.getId();
 
         assertEquals(true, matcher.matches(testAccount));
     }
@@ -46,6 +46,7 @@ public class AccountServiceTest {
         when(accountDao.saveAccount(accountArgumentCaptor.capture())).thenReturn(new Account(1L, BigDecimal.TEN));
         accountDao.saveAccount(new Account(1L, BigDecimal.TEN));
         verify(accountDao, only()).saveAccount(accountArgumentCaptor.capture());
+        assertEquals( BigDecimal.TEN, accountArgumentCaptor.getValue().getAmount());
    }
 
     @Test
