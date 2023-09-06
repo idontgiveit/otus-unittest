@@ -69,6 +69,20 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        ArgumentCaptor<BigDecimal> amountCaptor = ArgumentCaptor.forClass(BigDecimal.class);
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
+
+        when(cardsDao.getCardByNumber("1111"))
+                .thenReturn(new Card(1L, "1111", 100L, TestUtil.getHash("0000")));
+
+        when(accountService.putMoney(idCaptor.capture(), amountCaptor.capture()))
+                .thenReturn(BigDecimal.TEN);
+
+        cardService.putMoney("1111", "0000", BigDecimal.ONE);
+
+        verify(accountService, only()).putMoney(anyLong(), any());
+        assertEquals(BigDecimal.ONE, amountCaptor.getValue());
+        assertEquals(100L, idCaptor.getValue().longValue());
     }
 
     @Test
@@ -76,9 +90,7 @@ public class CardServiceTest {
         Card card = new Card(1L, "1234", 1L, "0000");
         when(cardsDao.getCardByNumber(eq("1234"))).thenReturn(card);
 
-        Exception thrown = assertThrows(IllegalArgumentException.class, () -> {
-            cardService.getBalance("1234", "0012");
-        });
+        Exception thrown = assertThrows(IllegalArgumentException.class, () -> cardService.getBalance("1234", "0012"));
         assertEquals(thrown.getMessage(), "Pincode is incorrect");
     }
 }
