@@ -27,7 +27,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean cnangePin(String number, String oldPin, String newPin) {
+    public boolean changePin(String number, String oldPin, String newPin) {
         Card card = cardsDao.getCardByNumber(number);
 
         if (card == null) {
