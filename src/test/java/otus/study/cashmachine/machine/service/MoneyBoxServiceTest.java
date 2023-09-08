@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import otus.study.cashmachine.machine.data.MoneyBox;
 import otus.study.cashmachine.machine.service.impl.MoneyBoxServiceImpl;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

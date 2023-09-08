@@ -54,7 +54,7 @@ public class CardServiceTest {
     void checkBalance() {
         Card card = new Card(1L, "1234", 1L, TestUtil.getHash("0000"));
         when(cardsDao.getCardByNumber(anyString())).thenReturn(card);
-        when(accountDao.getAccount(1L)).thenReturn(new Account(1L,new BigDecimal(1000)));
+        when(accountDao.getAccount(1L)).thenReturn(new Account(1L, new BigDecimal(1000)));
 
         BigDecimal sum = cardService.getBalance("1234", "0000");
         assertEquals(0, sum.compareTo(new BigDecimal(1000)));
@@ -66,7 +66,7 @@ public class CardServiceTest {
         when(accountDao.getAccount(1L)).thenReturn(new Account(1L, new BigDecimal(1000)));
         BigDecimal cardExt = cardService.getMoney("1111", "0000", BigDecimal.ONE);
         BigDecimal result = BigDecimal.valueOf(1000).subtract(BigDecimal.ONE);
-        assertEquals(cardExt, result);
+        assertEquals(0,cardExt.compareTo(result));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class CardServiceTest {
         when(accountDao.getAccount(1L)).thenReturn(new Account(1L, new BigDecimal(1000)));
         BigDecimal cardExt = cardService.putMoney("1111", "0000", BigDecimal.ONE);
         BigDecimal result = BigDecimal.valueOf(1000).add(BigDecimal.ONE);
-        assertEquals(cardExt, result);
+        assertEquals(0,cardExt.compareTo(result));
 
     }
 
