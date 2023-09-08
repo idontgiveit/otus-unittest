@@ -2,28 +2,39 @@ package otus.study.cashmachine.bank.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import otus.study.cashmachine.TestUtil;
+import otus.study.cashmachine.bank.dao.AccountDao;
 import otus.study.cashmachine.bank.dao.CardsDao;
+import otus.study.cashmachine.bank.data.Account;
 import otus.study.cashmachine.bank.data.Card;
+import otus.study.cashmachine.bank.service.impl.AccountServiceImpl;
 import otus.study.cashmachine.bank.service.impl.CardServiceImpl;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class CardServiceTest {
-    AccountService accountService;
 
+    @InjectMocks
+    AccountServiceImpl accountService;
+    @Mock
     CardsDao cardsDao;
 
     CardService cardService;
+    @Mock
+    AccountDao accountDao;
 
     @BeforeEach
     void init() {
-        cardsDao = mock(CardsDao.class);
-        accountService = mock(AccountService.class);
+
         cardService = new CardServiceImpl(accountService, cardsDao);
     }
 
@@ -43,7 +54,7 @@ public class CardServiceTest {
     void checkBalance() {
         Card card = new Card(1L, "1234", 1L, TestUtil.getHash("0000"));
         when(cardsDao.getCardByNumber(anyString())).thenReturn(card);
-        when(accountService.checkBalance(1L)).thenReturn(new BigDecimal(1000));
+        when(accountDao.getAccount(1L)).thenReturn(new Account(1L, new BigDecimal(1000)));
 
         BigDecimal sum = cardService.getBalance("1234", "0000");
         assertEquals(0, sum.compareTo(new BigDecimal(1000)));
@@ -51,24 +62,21 @@ public class CardServiceTest {
 
     @Test
     void getMoney() {
-        ArgumentCaptor<BigDecimal> amountCaptor = ArgumentCaptor.forClass(BigDecimal.class);
-        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
-
-        when(cardsDao.getCardByNumber("1111"))
-                .thenReturn(new Card(1L, "1111", 100L, TestUtil.getHash("0000")));
-
-        when(accountService.getMoney(idCaptor.capture(), amountCaptor.capture()))
-                .thenReturn(BigDecimal.TEN);
-
-        cardService.getMoney("1111", "0000", BigDecimal.ONE);
-
-        verify(accountService, only()).getMoney(anyLong(), any());
-        assertEquals(BigDecimal.ONE, amountCaptor.getValue());
-        assertEquals(100L, idCaptor.getValue().longValue());
+        when(cardsDao.getCardByNumber("1111")).thenReturn(new Card(1L, "1111", 1L, TestUtil.getHash("0000")));
+        when(accountDao.getAccount(1L)).thenReturn(new Account(1L, new BigDecimal(1000)));
+        BigDecimal cardExt = cardService.getMoney("1111", "0000", BigDecimal.ONE);
+        BigDecimal result = BigDecimal.valueOf(1000).subtract(BigDecimal.ONE);
+        assertEquals(0,cardExt.compareTo(result));
     }
 
     @Test
     void putMoney() {
+        when(cardsDao.getCardByNumber("1111")).thenReturn(new Card(1L, "1111", 1L, TestUtil.getHash("0000")));
+        when(accountDao.getAccount(1L)).thenReturn(new Account(1L, new BigDecimal(1000)));
+        BigDecimal cardExt = cardService.putMoney("1111", "0000", BigDecimal.ONE);
+        BigDecimal result = BigDecimal.valueOf(1000).add(BigDecimal.ONE);
+        assertEquals(0,cardExt.compareTo(result));
+
     }
 
     @Test
