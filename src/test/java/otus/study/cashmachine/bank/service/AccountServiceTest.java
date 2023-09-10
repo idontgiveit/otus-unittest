@@ -27,7 +27,7 @@ public class AccountServiceTest {
     final BigDecimal TEST_AMOUNT = new BigDecimal("6600.00");
 
     @BeforeEach
-    void init(){
+    void init() {
         accountMock = mock(Account.class);
         when(accountMock.getId()).thenReturn(TEST_ID);
         when(accountMock.getAmount()).thenReturn(TEST_AMOUNT);
@@ -35,12 +35,20 @@ public class AccountServiceTest {
         accountDao = mock(AccountDao.class);
         accountServiceImpl = new AccountServiceImpl(accountDao);
     }
+
     @Test
-    void createAccountMock() {
+    void createAccountMockId() {
         when(accountDao.saveAccount(any())).thenReturn(accountMock);
 
         Account account = accountServiceImpl.createAccount(TEST_AMOUNT);
         assertEquals(TEST_ID, account.getId());
+    }
+
+    @Test
+    void createAccountMockAmount() {
+        when(accountDao.saveAccount(any())).thenReturn(accountMock);
+
+        Account account = accountServiceImpl.createAccount(TEST_AMOUNT);
         assertEquals(TEST_AMOUNT, account.getAmount());
     }
 
@@ -66,7 +74,7 @@ public class AccountServiceTest {
         assertEquals(new BigDecimal("0.00"), accountServiceImpl.getMoney(TEST_ID, TEST_AMOUNT));
 
         BigDecimal tooBigAmount = TEST_AMOUNT.add(BigDecimal.ONE);
-        Exception exception =  assertThrows(IllegalArgumentException.class,
+        Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> accountServiceImpl.getMoney(TEST_ID, tooBigAmount));
         assertEquals(exception.getMessage(), "Not enough money");
     }
