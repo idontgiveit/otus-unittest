@@ -13,6 +13,7 @@ import otus.study.cashmachine.bank.service.impl.AccountServiceImpl;
 
 import java.math.BigDecimal;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +33,9 @@ public class AccountServiceTest {
 
     private final long ACCOUNT_ID = 1L;
     private final BigDecimal AMOUNT = new BigDecimal("1000");
-
+    private final BigDecimal ADDED_AMOUNT = new BigDecimal("2000");
+    private final BigDecimal WITHDRAW_AMOUNT = new BigDecimal("500");
+    private final BigDecimal EXCEED_AMOUNT = new BigDecimal("5000");
     @BeforeEach
     void init() {
         accountExpected = new Account(ACCOUNT_ID, AMOUNT);
@@ -56,17 +59,47 @@ public class AccountServiceTest {
 
     @Test
     void addSum() {
+        when(accountDao.getAccount(anyLong()))
+                .thenReturn(accountExpected);
+
+        var result = accountServiceImpl.putMoney(ACCOUNT_ID, AMOUNT);
+        Assertions.assertThat(result).isEqualTo(ADDED_AMOUNT);
     }
 
     @Test
     void getSum() {
+        when(accountDao.getAccount(anyLong()))
+                .thenReturn(accountExpected);
+
+        var result = accountServiceImpl.getMoney(ACCOUNT_ID, WITHDRAW_AMOUNT);
+        Assertions.assertThat(result).isEqualTo(WITHDRAW_AMOUNT);
+    }
+
+    @Test
+    void getSumFailed() {
+        when(accountDao.getAccount(anyLong()))
+                .thenReturn(accountExpected);
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> accountServiceImpl.getMoney(ACCOUNT_ID, EXCEED_AMOUNT))
+                .withMessage("Not enough money");
     }
 
     @Test
     void getAccount() {
+        when(accountDao.getAccount(anyLong()))
+                .thenReturn(accountExpected);
+
+        var result = accountServiceImpl.getAccount(ACCOUNT_ID);
+        Assertions.assertThat(result).isEqualTo(accountExpected);
     }
 
     @Test
     void checkBalance() {
+        when(accountDao.getAccount(anyLong()))
+                .thenReturn(accountExpected);
+
+        var result = accountServiceImpl.checkBalance(ACCOUNT_ID);
+        Assertions.assertThat(result).isEqualTo(AMOUNT);
     }
 }

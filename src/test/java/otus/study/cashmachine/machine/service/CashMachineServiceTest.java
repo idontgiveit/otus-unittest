@@ -19,8 +19,7 @@ import otus.study.cashmachine.machine.service.impl.CashMachineServiceImpl;
 import java.math.BigDecimal;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CashMachineServiceTest {
@@ -84,11 +83,29 @@ class CashMachineServiceTest {
 
     @Test
     void putMoney() {
+        when(cardsDao.getCardByNumber(CARD_NUMBER))
+                .thenReturn(card);
+        when(accountService.putMoney(any(), any()))
+                .thenReturn(SUM);
+
+        var result = cashMachineService.putMoney(cashMachine, CARD_NUMBER, PIN, List.of(1, 1));
+
+        verify(cardService, times(1)).getBalance(any(), any());
+        verify(moneyBoxService, times(1))
+                .putMoney(cashMachine.getMoneyBox(), 0, 0, 1, 1);
+        Assertions.assertThat(result).isEqualTo(SUM);
     }
 
     @Test
     void checkBalance() {
+        when(cardsDao.getCardByNumber(CARD_NUMBER))
+                .thenReturn(card);
+        when(accountService.checkBalance(any()))
+                .thenReturn(SUM);
 
+        var result = cashMachineService.checkBalance(cashMachine, CARD_NUMBER, PIN);
+
+        Assertions.assertThat(result).isEqualTo(SUM);
     }
 
     @Test
