@@ -1,5 +1,6 @@
 package otus.study.cashmachine.bank.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -69,6 +70,22 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        String cardNumber = "1111";
+        String pin = "1111";
+        String hashEqualsPin1111 = "011c945f30ce2cbafc452f39840f025693339c42";
+        BigDecimal balance = new BigDecimal(1000);
+        BigDecimal amountToPut = new BigDecimal(450);
+        BigDecimal expectedResultBalance = new BigDecimal(balance.intValue() + amountToPut.intValue());
+        Long accountId = 1L;
+        Card card = new Card(1L, cardNumber, accountId, hashEqualsPin1111);
+        when(cardsDao.getCardByNumber(cardNumber)).thenReturn(card);
+        when(accountService.putMoney(accountId, amountToPut)).thenReturn(expectedResultBalance);
+
+
+        BigDecimal actualResultBalance = cardService.putMoney(cardNumber, pin, amountToPut);
+
+
+        Assertions.assertEquals(expectedResultBalance, actualResultBalance);
     }
 
     @Test
