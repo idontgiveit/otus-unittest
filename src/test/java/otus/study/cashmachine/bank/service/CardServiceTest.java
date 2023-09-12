@@ -9,7 +9,6 @@ import otus.study.cashmachine.bank.data.Card;
 import otus.study.cashmachine.bank.service.impl.CardServiceImpl;
 
 import java.math.BigDecimal;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -69,6 +68,42 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        String pin = "0000";
+
+        Card card = new Card(1L, "1234", 25L, TestUtil.getHash(pin));
+        BigDecimal addedDecimal = BigDecimal.TEN;
+
+        when(cardsDao.getCardByNumber("1111"))
+                .thenReturn(null);
+        when(cardsDao.getCardByNumber("1234"))
+                .thenReturn(card);
+        when(accountService.putMoney(25L, addedDecimal)).thenReturn(addedDecimal);
+
+
+        assertThrows(IllegalArgumentException.class, () ->
+                cardService.putMoney("1111", pin, addedDecimal));
+        assertEquals(addedDecimal,
+                cardService.putMoney("1234", pin, addedDecimal));
+
+    }
+
+    @Test
+    void changePin() {
+        String pin = "0000";
+        String newPin = "0001";
+
+        Card card = new Card(1L, "1234", 25L, TestUtil.getHash(pin));
+
+        when(cardsDao.getCardByNumber("1111"))
+                .thenReturn(null);
+        when(cardsDao.getCardByNumber("1234"))
+                .thenReturn(card);
+
+        assertThrows(IllegalArgumentException.class, () ->
+                cardService.cnangePin("1111", pin, newPin));
+        assertTrue(cardService.cnangePin("1234", pin, newPin));
+        assertFalse(cardService.cnangePin("1234", pin, newPin));
+
     }
 
     @Test
