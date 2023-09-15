@@ -14,10 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CardServiceTest {
+
     AccountService accountService;
-
     CardsDao cardsDao;
-
     CardService cardService;
 
     @BeforeEach
@@ -69,6 +68,33 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        String number = "1111";
+        String pin = "1234";
+        BigDecimal amount = new BigDecimal(1000);
+
+        when(cardsDao.getCardByNumber(eq(number))).thenReturn(null);
+        assertThrows(IllegalArgumentException.class, () -> cardService.putMoney(number, pin, amount));
+
+        verify(cardsDao).getCardByNumber(number);
+    }
+
+    @Test
+    void putMoney2() {
+        String number = "1111";
+        String pin = "1234";
+        BigDecimal amount = new BigDecimal(3000);
+        BigDecimal addAmount = new BigDecimal(1500);
+
+        Card card = new Card(1L, number, 0L, "7110eda4d09e062aa5e4a390b0a572ac0d2c0220");
+        when(cardsDao.getCardByNumber(number)).thenReturn(card);
+
+        when(accountService.putMoney(card.getAccountId(), amount)).thenReturn(addAmount);
+
+        BigDecimal actualBalance = cardService.putMoney(number, pin, amount);
+        assertEquals(addAmount, actualBalance);
+
+        verify(cardsDao).getCardByNumber(number);
+        verify(accountService).putMoney(card.getAccountId(), amount);
     }
 
     @Test
