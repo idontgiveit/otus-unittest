@@ -14,9 +14,7 @@ import java.util.List;
 public class CashMachineServiceImpl implements CashMachineService {
 
     private CardService cardService;
-
     private AccountService accountService;
-
     private MoneyBoxService moneyBoxService;
 
     public CashMachineServiceImpl(final CardService cardService, final AccountService accountService, final MoneyBoxService moneyBoxService) {
