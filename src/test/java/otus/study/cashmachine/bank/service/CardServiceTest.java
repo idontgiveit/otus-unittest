@@ -22,6 +22,7 @@ public class CardServiceTest {
 
     @BeforeEach
     void init() {
+        // Some changes to test
         cardsDao = mock(CardsDao.class);
         accountService = mock(AccountService.class);
         cardService = new CardServiceImpl(accountService, cardsDao);
