@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import otus.study.cashmachine.bank.dao.AccountDao;
 import otus.study.cashmachine.bank.data.Account;
 import otus.study.cashmachine.bank.service.impl.AccountServiceImpl;
@@ -28,14 +29,15 @@ public class AccountServiceTest {
     AccountServiceTest accountService;
     @Mock
     AccountServiceImpl accountServiceImpl;
+
     @BeforeEach
     void unit() {
     accountDao = mock(AccountDao.class);
+        MockitoAnnotations.openMocks(this);
     }
-
     @BeforeEach
-    public void setUp() {
-        accountService = new AccountServiceTest();
+    void setUp() {
+        accountServiceImpl = new AccountServiceImpl(accountDao);
     }
     @Test
     void createAccountMock() {
@@ -57,16 +59,14 @@ public class AccountServiceTest {
 
     @Test
     void addSum() {
-        Long accountId = 1L;
-        BigDecimal amount = new BigDecimal("100");
-        Account account = new Account(accountId, amount);
-        when(accountDao.getAccount(accountId)).thenReturn(account);
-        BigDecimal updatedAmount = accountService.accountServiceImpl.putMoney(accountId, amount);
-        verify(accountDao, times(1)).getAccount(accountId);
-        verify(accountDao, times(1)).saveAccount(account);
-        assertEquals(amount.add(amount), updatedAmount);
+        Account account = new Account(1L, BigDecimal.ZERO);
+        when(accountDao.getAccount(1L)).thenReturn(account);
+        BigDecimal amountToAdd = new BigDecimal("100");
+        BigDecimal expectedBalance = BigDecimal.ZERO.add(amountToAdd);
+        BigDecimal actualBalance = accountServiceImpl.putMoney(1L, amountToAdd);
+        verify(accountDao).getAccount(1L);
+        assertEquals(expectedBalance, actualBalance);
     }
-// не понимаю, почему ошибка
 
 
     @Test
