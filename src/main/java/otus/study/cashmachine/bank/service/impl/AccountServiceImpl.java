@@ -21,12 +21,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getAccount(Long id) {
+
         return accountDao.getAccount(id);
     }
+
+
 
     @Override
     public BigDecimal getMoney(Long id, BigDecimal amount) {
         Account account = accountDao.getAccount(id);
+
         if (account.getAmount().subtract(amount).doubleValue() < 0) {
             throw new IllegalArgumentException("Not enough money");
         }
