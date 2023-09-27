@@ -1,10 +1,12 @@
 package otus.study.cashmachine.machine.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import otus.study.cashmachine.TestUtil;
 import otus.study.cashmachine.bank.dao.CardsDao;
 import otus.study.cashmachine.bank.data.Card;
 import otus.study.cashmachine.bank.service.AccountService;
@@ -54,6 +56,7 @@ class CashMachineServiceTest {
     final int TEST_1_MONEY = 1;
     final BigDecimal TEST_AMOUNT = new BigDecimal(6600);
     final List<Integer> TEST_LIST_MONEY = new ArrayList<>(Arrays.asList(TEST_1_MONEY, TEST_1_MONEY, TEST_1_MONEY, TEST_1_MONEY));
+    private Card testedCard;
 
     @BeforeEach
     void init() {
@@ -85,9 +88,14 @@ class CashMachineServiceTest {
     @Test
     void changePin() {
 // @TODO create change pin test using spy as implementation and ArgumentCaptor and thenReturn
-        ArgumentCaptor<String> cardNumberCaptor = ArgumentCaptor.forClass(String.class);
-        when(cardService.cnangePin(cardNumberCaptor.capture(), eq(TEST_CARD_PINCODE_OLD), eq(TEST_CARD_PINCODE_NEW))).thenReturn(true);
-        assertTrue(cashMachineService.changePin(TEST_CARD_NUMBER, TEST_CARD_PINCODE_OLD, TEST_CARD_PINCODE_NEW));
+        testedCard = new Card(1L, TEST_CARD_NUMBER, 10L, TestUtil.getHash(TEST_CARD_PINCODE_OLD));
+        when(cardsDao.getCardByNumber(TEST_CARD_NUMBER)).thenReturn(testedCard);
+
+        ArgumentCaptor<Card> captor = ArgumentCaptor.forClass(Card.class);
+        when(cardsDao.saveCard(captor.capture())).thenReturn(null);
+
+        cashMachineService.changePin(TEST_CARD_NUMBER, TEST_CARD_PINCODE_OLD, TEST_CARD_PINCODE_NEW);
+        Assertions.assertEquals(captor.getValue().getPinCode(), TestUtil.getHash(TEST_CARD_PINCODE_NEW));
     }
 
     @Test
