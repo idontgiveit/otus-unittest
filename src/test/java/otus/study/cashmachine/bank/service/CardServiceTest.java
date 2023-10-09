@@ -69,7 +69,18 @@ public class CardServiceTest {
 
     @Test
     void putMoney() {
+        when(cardsDao.getCardByNumber("1111"))
+                .thenReturn(new Card(1L, "1111", 100L, TestUtil.getHash("0000")));
+
+        when(accountService.putMoney(100L, new BigDecimal(2000)))
+                .thenReturn(new BigDecimal(3000));
+
+        cardService.putMoney("1111", "0000", new BigDecimal(2000));
+
+        assertEquals(new BigDecimal(3000), cardService.putMoney("1111", "0000", new BigDecimal(2000)));
+
     }
+
 
     @Test
     void checkIncorrectPin() {
@@ -80,5 +91,24 @@ public class CardServiceTest {
             cardService.getBalance("1234", "0012");
         });
         assertEquals(thrown.getMessage(), "Pincode is incorrect");
+    }
+
+    @Test
+    void changePin() {
+        when(cardsDao.getCardByNumber("1111"))
+                .thenReturn(new Card(1L, "1111", 100L, TestUtil.getHash("0000")));
+
+
+        assertEquals(true, cardService.cnangePin("1111", "0000", "0001"));
+
+    }
+
+    @Test
+    void changePinWithException(){
+        when(cardsDao.getCardByNumber("1111"))
+                .thenReturn(new Card(1L, "1111", 100L, TestUtil.getHash("0000")));
+
+
+        assertEquals(false, cardService.cnangePin("1111", "0001", "0001"));
     }
 }
