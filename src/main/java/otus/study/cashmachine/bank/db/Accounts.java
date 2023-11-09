@@ -18,9 +18,13 @@ public class Accounts {
         accounts.put(3L, new Account(1, BigDecimal.valueOf(0)));
     }
 
-    public static Long getNexyId() {
+    public static long getNextId() {
         idSequence ++;
         return idSequence;
     }
 
+    public static long getNexyId() {
+        idSequence ++;
+        return idSequence;
+    }
 }

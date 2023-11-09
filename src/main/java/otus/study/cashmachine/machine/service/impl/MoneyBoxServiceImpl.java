@@ -20,27 +20,27 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
     }
 
     @Override
-    public int checkSum() {
-        return moneyBox.getNote100() * 100 + moneyBox.getNote500() * 500 + moneyBox.getNote1000() * 1000 + moneyBox.getNote5000() * 5000;
+    public int checkSum(MoneyBox moneyBox) {
+        return this.moneyBox.getNote100() * 100 + this.moneyBox.getNote500() * 500 + this.moneyBox.getNote1000() * 1000 + this.moneyBox.getNote5000() * 5000;
     }
 
     @Override
-    public void putMoney(int note100, int note500, int note1000, int note5000) {
-        if (moneyBox == null) {
+    public void putMoney(MoneyBox moneyBox, int note100, int note500, int note1000, int note5000) {
+        if (this.moneyBox == null) {
             throw new IllegalStateException("No money box");
         }
 
-        moneyBox.setNote100(moneyBox.getNote100() + note100);
-        moneyBox.setNote500(moneyBox.getNote500() + note500);
-        moneyBox.setNote1000(moneyBox.getNote1000() + note1000);
-        moneyBox.setNote5000(moneyBox.getNote5000() + note5000);
+        this.moneyBox.setNote100(this.moneyBox.getNote100() + note100);
+        this.moneyBox.setNote500(this.moneyBox.getNote500() + note500);
+        this.moneyBox.setNote1000(this.moneyBox.getNote1000() + note1000);
+        this.moneyBox.setNote5000(this.moneyBox.getNote5000() + note5000);
     }
 
     @Override
-    public List<Integer> getMoney(int sum) {
+    public List<Integer> getMoney(MoneyBox moneyBox, int sum) {
         List<Integer> result = new ArrayList<>(Arrays.asList(0, 0, 0, 0));
 
-        if (sum > checkSum()) {
+        if (sum > checkSum(this.moneyBox)) {
             throw new IllegalStateException("Not enough money");
         }
 
@@ -53,10 +53,10 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
 
         if (sum >= 5000) {
             requiredNotes = sum / 5000;
-            if (requiredNotes <= moneyBox.getNote5000()) {
+            if (requiredNotes <= this.moneyBox.getNote5000()) {
                 chargedNotes = requiredNotes;
             } else {
-                chargedNotes = moneyBox.getNote5000();
+                chargedNotes = this.moneyBox.getNote5000();
             }
             sum -= chargedNotes * 5000;
             result.set(0, chargedNotes);
@@ -64,10 +64,10 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
 
         if (sum >= 1000) {
             requiredNotes = sum / 1000;
-            if (requiredNotes <= moneyBox.getNote1000()) {
+            if (requiredNotes <= this.moneyBox.getNote1000()) {
                 chargedNotes = requiredNotes;
             } else {
-                chargedNotes = moneyBox.getNote1000();
+                chargedNotes = this.moneyBox.getNote1000();
             }
             sum -= chargedNotes * 1000;
             result.set(1, chargedNotes);
@@ -75,10 +75,10 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
 
         if (sum >= 500) {
             requiredNotes = sum / 500;
-            if (requiredNotes <= moneyBox.getNote500()) {
+            if (requiredNotes <= this.moneyBox.getNote500()) {
                 chargedNotes = requiredNotes;
             } else {
-                chargedNotes = moneyBox.getNote500();
+                chargedNotes = this.moneyBox.getNote500();
             }
             sum -= chargedNotes * 500;
             result.set(2, chargedNotes);
@@ -86,10 +86,10 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
 
         if (sum >= 100) {
             requiredNotes = sum / 100;
-            if (requiredNotes <= moneyBox.getNote100()) {
+            if (requiredNotes <= this.moneyBox.getNote100()) {
                 chargedNotes = requiredNotes;
             } else {
-                chargedNotes = moneyBox.getNote100();
+                chargedNotes = this.moneyBox.getNote100();
             }
             sum -= chargedNotes * 100;
             result.set(3, chargedNotes);
@@ -99,10 +99,10 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
             throw new IllegalStateException("Not enough notes");
         }
 
-        moneyBox.setNote5000(moneyBox.getNote5000() - result.get(0));
-        moneyBox.setNote1000(moneyBox.getNote1000() - result.get(1));
-        moneyBox.setNote500(moneyBox.getNote500() - result.get(2));
-        moneyBox.setNote100(moneyBox.getNote100() - result.get(3));
+        this.moneyBox.setNote5000(this.moneyBox.getNote5000() - result.get(0));
+        this.moneyBox.setNote1000(this.moneyBox.getNote1000() - result.get(1));
+        this.moneyBox.setNote500(this.moneyBox.getNote500() - result.get(2));
+        this.moneyBox.setNote100(this.moneyBox.getNote100() - result.get(3));
 
         return result;
     }
