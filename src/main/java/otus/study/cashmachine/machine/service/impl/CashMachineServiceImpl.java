@@ -3,13 +3,13 @@ package otus.study.cashmachine.machine.service.impl;
 import otus.study.cashmachine.bank.service.AccountService;
 import otus.study.cashmachine.bank.service.CardService;
 import otus.study.cashmachine.machine.data.CashMachine;
+import otus.study.cashmachine.machine.data.MoneyBox;
 import otus.study.cashmachine.machine.service.CashMachineService;
 import otus.study.cashmachine.machine.service.MoneyBoxService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CashMachineServiceImpl implements CashMachineService {
 
@@ -30,7 +30,8 @@ public class CashMachineServiceImpl implements CashMachineService {
         moneyBoxService.changeMoneyBox(machine.getMoneyBox());
         try {
             BigDecimal sum = cardService.getMoney(cardNum, pin, amount);
-            return moneyBoxService.getMoney(amount.intValue());
+            MoneyBox moneyBox = null;
+            return moneyBoxService.getMoney(moneyBox, amount.intValue());
         } catch (Exception e) {
             cardService.putMoney(cardNum, pin, amount);
             throw new RuntimeException(e);
@@ -47,7 +48,8 @@ public class CashMachineServiceImpl implements CashMachineService {
             arrangedNotes.add(0);
         }
 
-        moneyBoxService.putMoney(arrangedNotes.get(3), arrangedNotes.get(2), arrangedNotes.get(1), arrangedNotes.get(0));
+        MoneyBox moneyBox = null;
+        moneyBoxService.putMoney(moneyBox, arrangedNotes.get(3), arrangedNotes.get(2), arrangedNotes.get(1), arrangedNotes.get(0));
         return cardService.putMoney(cardNum, pin, new BigDecimal(
                 arrangedNotes.get(3) * 100 +
                     arrangedNotes.get(2) * 500 +

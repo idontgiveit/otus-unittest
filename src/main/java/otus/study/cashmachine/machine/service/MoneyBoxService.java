@@ -9,10 +9,10 @@ public interface MoneyBoxService {
 
     MoneyBox changeMoneyBox(MoneyBox moneyBox);
 
-    int checkSum();
+    int checkSum(MoneyBox moneyBox);
 
-    void putMoney(int note100, int note500, int note1000, int note5000);
+    void putMoney(MoneyBox moneyBox, int note100, int note500, int note1000, int note5000);
 
-    List<Integer> getMoney(int sum);
+    List<Integer> getMoney(MoneyBox moneyBox, int sum);
 
 }
