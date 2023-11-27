@@ -1,5 +1,6 @@
 package otus.study.cashmachine.bank.service.impl;
 
+import otus.study.cashmachine.bank.dao.AccountDao;
 import otus.study.cashmachine.bank.data.Account;
 import otus.study.cashmachine.bank.db.Accounts;
 import otus.study.cashmachine.bank.service.AccountService;
@@ -7,6 +8,10 @@ import otus.study.cashmachine.bank.service.AccountService;
 import java.math.BigDecimal;
 
 public class AccountServiceImpl implements AccountService {
+    AccountDao accountDao;
+    public AccountServiceImpl(final AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
     @Override
     public Account createAccount(BigDecimal amount) {
         Account newAccount = new Account(Accounts.getNexyId(), amount);
