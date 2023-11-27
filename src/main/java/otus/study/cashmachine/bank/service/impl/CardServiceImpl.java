@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 
 public class CardServiceImpl implements CardService {
     AccountService accountService;
-
     CardsDao cardsDao;
 
     public CardServiceImpl(final AccountService accountService, final CardsDao cardsDao) {
