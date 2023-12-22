@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Put Money</title>
+</head>
+<body>
+<h1>Put Money</h1>
+<form th:action="@{/putMoney}" method="post">
+    <label for="cardNum">Card Number:</label>
+    <input type="text" id="cardNum" name="cardNum" placeholder="Enter Card Number"><br><br>
+
+    <label for="pin">PIN:</label>
+    <input type="text" id="pin" name="pin" placeholder="Enter PIN"><br><br>
+
+
+    <label for="count5000">5000 notes:</label>
+    <input type="text" id="count5000" name="count5000" placeholder="Enter quantity"><br><br>
+
+    <label for="count1000">1000 notes:</label>
+    <input type="text" id="count1000" name="count1000" placeholder="Enter quantity"><br><br>
+
+    <label for="count500">500 notes:</label>
+    <input type="text" id="count500" name="count500" placeholder="Enter quantity"><br><br>
+
+    <label for="count100">100 notes:</label>
+    <input type="text" id="count100" name="count100" placeholder="Enter quantity"><br><br>
+
+    <button type="submit">Put Money</button>
+</form>
+
+<div th:if="${balance}">
+    <h2>Current Balance:</h2>
+    <p th:text="${balance}"></p>
+</div>
+</body>
+</html>

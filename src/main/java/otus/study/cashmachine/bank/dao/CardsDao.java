@@ -1,9 +1,12 @@
 package otus.study.cashmachine.bank.dao;
 
+import org.springframework.stereotype.Repository;
 import otus.study.cashmachine.bank.data.Card;
 import otus.study.cashmachine.bank.db.Cards;
 
+@Repository
 public class CardsDao {
+
     public Card getCardByNumber(String cardNumber) {
         return Cards.cards.get(cardNumber);
     }

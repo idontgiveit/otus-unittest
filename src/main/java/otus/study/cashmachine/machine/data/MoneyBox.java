@@ -1,10 +1,13 @@
 package otus.study.cashmachine.machine.data;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class MoneyBox {
-    int note100;
-    int note500;
-    int note1000;
-    int note5000;
+    private int note100;
+    private int note500;
+    private int note1000;
+    private int note5000;
 
     public MoneyBox() {
         this(1000, 1000, 1000, 1000);

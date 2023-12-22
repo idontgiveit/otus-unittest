@@ -1,5 +1,8 @@
 package otus.study.cashmachine.machine.data;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class CashMachine {
     private MoneyBox moneyBox;
 

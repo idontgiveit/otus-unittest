@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Get Money</title>
+</head>
+<body>
+<h1>Get Money</h1>
+<form th:action="@{/getMoney}" method="post">
+  <label for="cardNum">Card Number:</label>
+  <input type="text" id="cardNum" name="cardNum" placeholder="Enter Card Number"><br><br>
+
+  <label for="pin">PIN:</label>
+  <input type="text" id="pin" name="pin" placeholder="Enter PIN"><br><br>
+
+  <label for="amount">Amount to Withdraw:</label>
+  <input type="text" id="amount" name="amount" placeholder="Enter Amount"><br><br>
+
+  <button type="submit">Get Money</button>
+</form>
+<div th:if="${notes5000 != null or notes1000 != null or notes500 != null or notes100 != null}">
+  <h1>Money Withdrawal Result</h1>
+  <p th:if="${notes5000 != null}">5000 notes: <span th:text="${notes5000}"></span></p>
+  <p th:if="${notes1000 != null}">1000 notes: <span th:text="${notes1000}"></span></p>
+  <p th:if="${notes500 != null}">500 notes: <span th:text="${notes500}"></span></p>
+  <p th:if="${notes100 != null}">100 notes: <span th:text="${notes100}"></span></p>
+</div>
+</body>
+</html>

@@ -1,18 +1,25 @@
 package otus.study.cashmachine.bank.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import otus.study.cashmachine.bank.dao.CardsDao;
 import otus.study.cashmachine.bank.data.Card;
 import otus.study.cashmachine.bank.service.AccountService;
 import otus.study.cashmachine.bank.service.CardService;
 
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 
+@Service
 public class CardServiceImpl implements CardService {
-    AccountService accountService;
 
-    CardsDao cardsDao;
+    private final AccountService accountService;
+    private final CardsDao cardsDao;
 
-    public CardServiceImpl(final AccountService accountService, final CardsDao cardsDao) {
+    @Autowired
+    public CardServiceImpl(AccountService accountService, CardsDao cardsDao) {
         this.accountService = accountService;
         this.cardsDao = cardsDao;
     }
@@ -30,12 +37,14 @@ public class CardServiceImpl implements CardService {
             throw new IllegalArgumentException("No card found");
         }
 
-        if (card.getPinCode().equals(oldPin)) {
-            card.setPinCode(newPin);
+        try {
+            checkPin(card, oldPin);
+            card.setPinCode(getHash(newPin));
+            cardsDao.saveCard(card);
             return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        return false;
     }
 
     @Override
@@ -45,10 +54,9 @@ public class CardServiceImpl implements CardService {
         if (card == null) {
             throw new IllegalArgumentException("No card found");
         }
-        if (card.getPinCode().equals(pin)) {
-            return accountService.getMoney(card.getAccountId(), sum);
-        }
-        throw new IllegalArgumentException("Pincode is incorrect");
+
+        checkPin(card, pin);
+        return accountService.getMoney(card.getAccountId(), sum);
     }
 
     @Override
@@ -58,10 +66,8 @@ public class CardServiceImpl implements CardService {
         if (card == null) {
             throw new IllegalArgumentException("No card found");
         }
-        if (card.getPinCode().equals(pin)) {
-            return accountService.putMoney(card.getAccountId(), sum);
-        }
-        throw new IllegalArgumentException("Pincode is incorrect");
+        checkPin(card, pin);
+        return accountService.putMoney(card.getAccountId(), sum);
     }
 
     @Override
@@ -71,9 +77,24 @@ public class CardServiceImpl implements CardService {
         if (card == null) {
             throw new IllegalArgumentException("No card found");
         }
-        if (card.getPinCode().equals(pin)) {
-            return accountService.checkBalance(card.getId());
+        checkPin(card, pin);
+        return accountService.checkBalance(card.getId());
+    }
+
+    private void checkPin(Card card, String pin) {
+        if (!getHash(pin).equals(card.getPinCode())) {
+            throw new IllegalArgumentException("Pincode is incorrect");
         }
-        throw new IllegalArgumentException("Pincode is incorrect");
+    }
+
+    private String getHash(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA1");
+            digest.update(value.getBytes());
+            String result = HexFormat.of().formatHex(digest.digest());
+            return result;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

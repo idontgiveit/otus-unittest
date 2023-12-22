@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Check Balance</title>
+</head>
+<body>
+<h1>Check Balance</h1>
+<form th:action="@{/checkBalance}" method="get">
+  <label for="cardNum">Card Number:</label>
+  <input type="text" id="cardNum" name="cardNum" placeholder="Enter Card Number"><br><br>
+
+  <label for="pin">PIN:</label>
+  <input type="text" id="pin" name="pin" placeholder="Enter PIN"><br><br>
+
+  <button type="submit">Get Balance</button>
+
+</form>
+<p> Current balance: <span th:text="${Balance}">  </span></p>
+</body>
+</html>
